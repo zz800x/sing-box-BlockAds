@@ -44,7 +44,6 @@ jobs:
           cat adrules_domainset2.txt >> adrules_domainset.json
           cp adrules_domainset.json adrules.json && rm adrules_domainset.json
           ./sing-box rule-set compile ./adrules.json -o adrules.srs
-          rm *.txt sing-box*
 
       - name: Convert  AntiAD to sing-rule-set
         run: |
