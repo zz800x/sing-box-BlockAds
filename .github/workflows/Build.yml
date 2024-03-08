@@ -18,38 +18,47 @@ jobs:
           echo "ADRules_URL=https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt" >> $GITHUB_ENV
         shell: bash
 
-      # - name: Download files
-      #   run: |
-      #     wget $ADRules_URL
-
-      - name: Convert json to sing-rule-set
+      - name: Download files
         run: |
-          pwd
-          cd ../
-          ls
-          pwd
-          cd ../
-          pwd
-          ls
-          # cp ../resouces/* ./
-          # chmod +x sing-box convert.sh && ./convert.sh
-          # rm *.txt
+          wget $ADRules_URL
+          wget https://github.com/SagerNet/sing-box/releases/download/v1.8.0/sing-box-1.8.0-linux-amd64.tar.gz -O sing-box.tar.gz && tar zxvf sing-box.tar.gz && mv sing-box-1.8.0-linux-amd64/sing-box ./ && rm -r sing-box-1.8.0-linux-amd64
+          chmod +x sing-box
 
-      # - name: Git push assets to "release" branch
-      #   run: |
-      #     git init
-      #     git config --local user.name "github-actions[bot]"
-      #     git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      #     git checkout -b release
-      #     git add .
-      #     git commit -m "Released on ${RELEASE_NAME}"
-      #     git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-      #     git push -f -u origin release
+      - name: Convert  ADRules to sing-rule-set
+        run: |
+          cp adrules_domainset.txt adrules_domainset2.txt
+          sed -i "s/^\+\./        \"/g" adrules_domainset.txt
+          sed -i "s/$/\",/g" adrules_domainset.txt
+          sed -i "$ s/,$//" adrules_domainset.txt
+          sed -i "/^#/a{\n  \"version\": 1,\n  \"rules\": [\n    {\n      \"domain\": [" adrules_domainset.txt
+          sed -i "/^#/d" adrules_domainset.txt
+          sed -i "s/^\+\./        \"\./g" adrules_domainset2.txt
+          sed -i "s/$/\",/g" adrules_domainset2.txt
+          sed -i "$ s/,$//" adrules_domainset2.txt
+          sed -i "/^#/a\      ],\n      \"domain_suffix\": [" adrules_domainset2.txt
+          sed -i "$ a\      ]\n    }\n  ]\n}" adrules_domainset2.txt
+          sed -i "/^#/d" adrules_domainset2.txt
+          cp adrules_domainset.txt adrules_domainset.json
+          cat adrules_domainset2.txt >> adrules_domainset.json
+          cp adrules_domainset.json adrules.json && rm adrules_domainset.json
+          ./sing-box rule-set compile ./adrules.json -o adrules.srs
+          rm *.txt
 
-      # - name: Delete Workflow Runs
-      #   uses: Mattraks/delete-workflow-runs@v2
-      #   with:
-      #     token: ${{ github.token }}
-      #     repository: ${{ github.repository }}
-      #     retain_days: 1
-      #     keep_minimum_runs: 1
+      - name: Git push assets to "release" branch
+        run: |
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          git add .
+          git commit -m "Released on ${RELEASE_NAME}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u origin release
+
+      - name: Delete Workflow Runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 1
