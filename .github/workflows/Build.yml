@@ -15,7 +15,7 @@ jobs:
       - name: Set variables
         run: |
           echo "RELEASE_NAME=$(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
-          echo "ADRules_URL=https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt" >> $GITHUB_ENV
+          echo "ADRules_URL=https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules-singbox.json" >> $GITHUB_ENV
           echo "AntiAD_URL=https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-clash.yaml" >> $GITHUB_ENV
         shell: bash
 
@@ -26,26 +26,11 @@ jobs:
           wget https://github.com/SagerNet/sing-box/releases/download/v1.8.0/sing-box-1.8.0-linux-amd64.tar.gz -O sing-box.tar.gz && tar zxvf sing-box.tar.gz && mv sing-box-1.8.0-linux-amd64/sing-box ./ && rm -r sing-box-1.8.0-linux-amd64
           chmod +x sing-box
 
-      - name: Convert  ADRules to sing-rule-set
+      - name: Convert ADRules to sing-rule-set
         run: |
-          cp adrules_domainset.txt adrules_domainset2.txt
-          sed -i "s/^\+\./        \"/g" adrules_domainset.txt
-          sed -i "s/$/\",/g" adrules_domainset.txt
-          sed -i "$ s/,$//" adrules_domainset.txt
-          sed -i "/^#/a{\n  \"version\": 1,\n  \"rules\": [\n    {\n      \"domain\": [" adrules_domainset.txt
-          sed -i "/^#/d" adrules_domainset.txt
-          sed -i "s/^\+\./        \"\./g" adrules_domainset2.txt
-          sed -i "s/$/\",/g" adrules_domainset2.txt
-          sed -i "$ s/,$//" adrules_domainset2.txt
-          sed -i "/^#/a\      ],\n      \"domain_suffix\": [" adrules_domainset2.txt
-          sed -i "$ a\      ]\n    }\n  ]\n}" adrules_domainset2.txt
-          sed -i "/^#/d" adrules_domainset2.txt
-          cp adrules_domainset.txt adrules_domainset.json
-          cat adrules_domainset2.txt >> adrules_domainset.json
-          cp adrules_domainset.json adrules.json && rm adrules_domainset.json
-          ./sing-box rule-set compile ./adrules.json -o adrules.srs
+          ./sing-box rule-set compile ./adrules-singbox.json -o adrules-singbox.json
 
-      - name: Convert  AntiAD to sing-rule-set
+      - name: Convert AntiAD to sing-rule-set
         run: |
           cp anti-ad-clash.yaml anti-ad-clash2.yaml
           sed -i "s/^  \- '+./        \"/g" anti-ad-clash.yaml
