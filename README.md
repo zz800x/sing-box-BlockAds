@@ -6,4 +6,4 @@
 
 [Anti-AD](https://github.com/privacy-protection-tools/anti-AD/master)
 
-## ** [点击跳转下载](https://github.com/zz800x/sing-box-BlockAds/release) **
+## [点击跳转下载地址](https://github.com/zz800x/sing-box-BlockAds/release)
