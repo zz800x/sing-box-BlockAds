@@ -24,6 +24,7 @@ jobs:
 
       - name: Convert json to sing-rule-set
         run: |
+          cp ./resouces/* ./
           chmod +x sing-box convert.sh && ./convert.sh
           rm *.txt
 
