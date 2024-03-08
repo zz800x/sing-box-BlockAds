@@ -18,31 +18,38 @@ jobs:
           echo "ADRules_URL=https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt" >> $GITHUB_ENV
         shell: bash
 
-      - name: Download files
-        run: |
-          wget $ADRules_URL
+      # - name: Download files
+      #   run: |
+      #     wget $ADRules_URL
 
       - name: Convert json to sing-rule-set
         run: |
-          cp ../resouces/* ./
-          chmod +x sing-box convert.sh && ./convert.sh
-          rm *.txt
+          pwd
+          cd ../
+          ls
+          pwd
+          cd ../
+          pwd
+          ls
+          # cp ../resouces/* ./
+          # chmod +x sing-box convert.sh && ./convert.sh
+          # rm *.txt
 
-      - name: Git push assets to "release" branch
-        run: |
-          git init
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b release
-          git add .
-          git commit -m "Released on ${RELEASE_NAME}"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-          git push -f -u origin release
+      # - name: Git push assets to "release" branch
+      #   run: |
+      #     git init
+      #     git config --local user.name "github-actions[bot]"
+      #     git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      #     git checkout -b release
+      #     git add .
+      #     git commit -m "Released on ${RELEASE_NAME}"
+      #     git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+      #     git push -f -u origin release
 
-      - name: Delete Workflow Runs
-        uses: Mattraks/delete-workflow-runs@v2
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 1
-          keep_minimum_runs: 1
+      # - name: Delete Workflow Runs
+      #   uses: Mattraks/delete-workflow-runs@v2
+      #   with:
+      #     token: ${{ github.token }}
+      #     repository: ${{ github.repository }}
+      #     retain_days: 1
+      #     keep_minimum_runs: 1
