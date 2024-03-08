@@ -5,7 +5,7 @@ on:
     - cron: "0 23 * * *"
   push:
     branches:
-      - master
+      - main
     paths-ignore:
       - "**/README.md"
 jobs:
@@ -21,16 +21,12 @@ jobs:
       - name: Download files
         run: |
           wget $ADRules_URL
-          pwd
-          ls
 
       - name: Convert json to sing-rule-set
         run: |
-          pwd
-          ls
-          # cp ./resouces/* ./
-          # chmod +x sing-box convert.sh && ./convert.sh
-          # rm *.txt
+          cp ../resouces/* ./
+          chmod +x sing-box convert.sh && ./convert.sh
+          rm *.txt
 
       - name: Git push assets to "release" branch
         run: |
