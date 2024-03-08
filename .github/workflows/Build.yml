@@ -21,12 +21,16 @@ jobs:
       - name: Download files
         run: |
           wget $ADRules_URL
+          pwd
+          ls
 
       - name: Convert json to sing-rule-set
         run: |
-          cp ./resouces/* ./
-          chmod +x sing-box convert.sh && ./convert.sh
-          rm *.txt
+          pwd
+          ls
+          # cp ./resouces/* ./
+          # chmod +x sing-box convert.sh && ./convert.sh
+          # rm *.txt
 
       - name: Git push assets to "release" branch
         run: |
