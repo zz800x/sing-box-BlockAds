@@ -16,11 +16,13 @@ jobs:
         run: |
           echo "RELEASE_NAME=$(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
           echo "ADRules_URL=https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt" >> $GITHUB_ENV
+          echo "AntiAD_URL=https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-clash.yaml" >> $GITHUB_ENV
         shell: bash
 
       - name: Download files
         run: |
           wget $ADRules_URL
+          wget $AntiAD_URL
           wget https://github.com/SagerNet/sing-box/releases/download/v1.8.0/sing-box-1.8.0-linux-amd64.tar.gz -O sing-box.tar.gz && tar zxvf sing-box.tar.gz && mv sing-box-1.8.0-linux-amd64/sing-box ./ && rm -r sing-box-1.8.0-linux-amd64
           chmod +x sing-box
 
@@ -43,6 +45,33 @@ jobs:
           cp adrules_domainset.json adrules.json && rm adrules_domainset.json
           ./sing-box rule-set compile ./adrules.json -o adrules.srs
           rm *.txt sing-box*
+
+      - name: Convert  AntiAD to sing-rule-set
+        run: |
+          cp anti-ad-clash.yaml anti-ad-clash2.yaml
+          sed -i "s/^  \- '+./        \"/g" anti-ad-clash.yaml
+          sed -i "/^#/d" anti-ad-clash.yaml
+          sed -i "/payload:/a{\n  \"version\": 1,\n  \"rules\": [\n    {\n      \"domain\": [" anti-ad-clash.yaml
+          sed -i "s/'$/\",/" anti-ad-clash.yaml
+          sed -i "/payload:/d" anti-ad-clash.yaml
+          sed -i "$ s/,//" anti-ad-clash.yaml
+          sed -i "/^$/d" anti-ad-clash.yaml
+          sed -i "s/^  \- '+./        \"\./g" anti-ad-clash2.yaml
+          sed -i "/^#/d" anti-ad-clash2.yaml
+          sed -i "/payload:/a\      ],\n      \"domain_suffix\": [" anti-ad-clash2.yaml
+          sed -i "s/'$/\",/" anti-ad-clash2.yaml
+          sed -i "/payload:/d" anti-ad-clash2.yaml
+          sed -i "$ s/,//" anti-ad-clash2.yaml
+          sed -i "$ a\      ]\n    }\n  ]\n}" anti-ad-clash2.yaml
+          sed -i "/^$/d" anti-ad-clash2.yaml
+          cp anti-ad-clash.yaml anti-ad-clash.json
+          cat anti-ad-clash2.yaml >> anti-ad-clash.json
+          cp anti-ad-clash.json anti-ad.json && rm anti-ad-clash.json
+          ./sing-box rule-set compile ./anti-ad.json -o anti-ad.srs
+
+      - name: clean dic
+        run: |
+          rm *.txt *.yaml sing-box*
 
       - name: Git push assets to "release" branch
         run: |
