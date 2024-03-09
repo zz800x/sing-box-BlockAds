@@ -2,8 +2,8 @@
 
 ### 目前已添加：
 
-[ADRules](https://github.com/Cats-Team/AdRules/main)
+[ADRules](https://github.com/Cats-Team/AdRules)
 
-[Anti-AD](https://github.com/privacy-protection-tools/anti-AD/master)
+[Anti-AD](https://github.com/privacy-protection-tools/anti-AD)
 
 ## [点击跳转下载地址](https://github.com/zz800x/sing-box-BlockAds/tree/release)
